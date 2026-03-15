@@ -417,31 +417,28 @@ with tab_singola:
         col1, col2 = st.columns(2)
         with col1:
             codice_utente = st.text_input("Codice utente (socio)", value="1")
-            nome_completo = st.text_input("Nome e cognome / Ragione sociale", value="")
-            codice_fiscale = st.text_input("Codice Fiscale / P.IVA", value="")
-            indirizzo = st.text_input("Indirizzo completo", value="",
-                                       placeholder="es. Strada Verzenasco 15, 15016 CASSINE (AL)")
+            nome_completo = st.text_input("Nome e cognome / Ragione sociale", value="ROSSI MARIO")
+            codice_fiscale = st.text_input("Codice Fiscale / P.IVA", value="RSSMRA80A01H703K")
+            indirizzo = st.text_input("Indirizzo completo", value="Strada Verzenasco 15, 15016 CASSINE (AL)")
 
         with col2:
-            numero_fattura = st.text_input("Numero fattura", value="")
-            data_fattura = st.text_input("Data fattura", value="20/10/2025",
-                                          placeholder="es. 20/10/2025")
-            scadenza_pagamento = st.text_input("Termine di pagamento", value="31/10/2025",
-                                                placeholder="es. 31/10/2025")
+            numero_fattura = st.text_input("Numero fattura", value="2")
+            data_fattura = st.text_input("Data fattura", value="20/10/2025")
+            scadenza_pagamento = st.text_input("Termine di pagamento", value="31/10/2025")
 
         st.divider()
         st.markdown("**Letture contatore**")
         periodo_letture = st.text_input(
             "Periodo di riferimento",
-            value="da Agosto 2025 ad Agosto 2026",
+            value="da Agosto 2024 ad Agosto 2025",
             help="Descrizione del periodo coperto dalle letture, es. 'da Agosto 2024 ad Agosto 2025'"
         )
 
         col3, col4 = st.columns(2)
         with col3:
-            m3_iniziale = st.number_input("Lettura iniziale (m\u00b3)", min_value=0, value=0, step=1)
+            m3_iniziale = st.number_input("Lettura iniziale (m\u00b3)", min_value=0, value=1200, step=1)
         with col4:
-            m3_finale = st.number_input("Lettura finale (m\u00b3)", min_value=0, value=0, step=1)
+            m3_finale = st.number_input("Lettura finale (m\u00b3)", min_value=0, value=1310, step=1)
 
         add_watermark_single = st.checkbox("Aggiungi filigrana BOZZA", key="wm_single")
 
