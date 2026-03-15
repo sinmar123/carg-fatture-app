@@ -265,7 +265,7 @@ def create_pdf_bytes(data, add_watermark=False, logo_bytes=None):
 
     # === PAGAMENTO ===
     payment_text = (
-        "<font size=11><b>MODALITA\u0300 DI PAGAMENTO</b></font><br/><br/>"
+        "<font size=11><b>MODALIT\u00c0 DI PAGAMENTO</b></font><br/><br/>"
         "<font size=10>Bonifico Bancario Banca Sella - filiale Acqui Terme</font><br/><br/>"
         "<font size=10>IBAN: IT16O0326847940052938107080</font><br/><br/>"
         "<font size=10>Conto: F652938107080</font><br/><br/>"
