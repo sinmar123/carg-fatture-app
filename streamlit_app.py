@@ -109,8 +109,9 @@ def create_pdf_bytes(data, add_watermark=False, logo_bytes=None):
         ParagraphStyle('CompanyInfo', parent=normal_style, fontSize=9, alignment=2)
     )
 
+    data_fattura = data.get('data_fattura', '20/10/2025')
     invoice_header = Paragraph(
-        f"<b><font size=11 color='grey'>FATTURA nr. {data.get('numero_fattura', 'N/A')}/2025 del 20/10/2025</font></b>",
+        f"<b><font size=11 color='grey'>FATTURA nr. {data.get('numero_fattura', 'N/A')}/2025 del {data_fattura}</font></b>",
         invoice_num_style
     )
 
@@ -171,14 +172,17 @@ def create_pdf_bytes(data, add_watermark=False, logo_bytes=None):
 
     nome_completo = data.get('nome_completo', 'N/A')
     numero_fattura = data.get('numero_fattura', 'N/A')
-    causale = f"CONSUMI PERIODO 2024-2025 - {nome_completo.upper()} - SOCIO {codice_utente} - FATTURA {numero_fattura}"
+    periodo_letture = data.get('periodo_letture', '2024-2025')
+    causale = f"CONSUMI PERIODO {periodo_letture.upper()} - {nome_completo.upper()} - SOCIO {codice_utente} - FATTURA {numero_fattura}"
 
     # === TABELLA SERVIZI ===
     table_data = [['DESCRIZIONE', 'QUANTITA\'', 'PREZZO UNITARIO', 'IMPORTO']]
 
+    label_iniziale = data.get('data_lettura_2024', 'lettura iniziale').lower()
+    label_finale = data.get('data_lettura_2025', 'lettura finale').lower()
     desc_consumi = (
-        f"<font size=10>Lettura {data.get('data_lettura_2025', 'N/A').lower()}: {lettura_2025} m\u00b3 | "
-        f"Lettura {data.get('data_lettura_2024', 'N/A').lower()}: {lettura_2024} m\u00b3 | "
+        f"<font size=10>Lettura {label_iniziale}: {lettura_2024} m\u00b3 | "
+        f"Lettura {label_finale}: {lettura_2025} m\u00b3 | "
         f"<b>Consumo totale: {consumo} m\u00b3</b>"
     )
     if eccedenza > 0:
@@ -250,9 +254,10 @@ def create_pdf_bytes(data, add_watermark=False, logo_bytes=None):
     story.append(Spacer(1, 1.5 * cm))
 
     # === SCADENZA ===
+    scadenza_pagamento = data.get('scadenza_pagamento', '31/10/2025')
     scadenze_text = (
         "<b><font size=10>SCADENZA</font></b><br/>"
-        "<font size=10 color='red'><b>31/10/2025</b></font>"
+        f"<font size=10 color='red'><b>{scadenza_pagamento}</b></font>"
     )
     story.append(Paragraph(scadenze_text, ParagraphStyle('Scadenze', parent=normal_style, alignment=2)))
     story.append(Spacer(1, 0.5 * cm))
@@ -419,10 +424,24 @@ with tab_singola:
 
         with col2:
             numero_fattura = st.text_input("Numero fattura", value="")
-            data_lettura_2024 = st.text_input("Periodo lettura 2024", value="AGOSTO 2024")
-            m3_2024 = st.number_input("Lettura m\u00b3 2024", min_value=0, value=0, step=1)
-            data_lettura_2025 = st.text_input("Periodo lettura 2025", value="AGOSTO 2025")
-            m3_2025 = st.number_input("Lettura m\u00b3 2025", min_value=0, value=0, step=1)
+            data_fattura = st.text_input("Data fattura", value="20/10/2025",
+                                          placeholder="es. 20/10/2025")
+            scadenza_pagamento = st.text_input("Termine di pagamento", value="31/10/2025",
+                                                placeholder="es. 31/10/2025")
+
+        st.divider()
+        st.markdown("**Letture contatore**")
+        periodo_letture = st.text_input(
+            "Periodo di riferimento",
+            value="da Agosto 2025 ad Agosto 2026",
+            help="Descrizione del periodo coperto dalle letture, es. 'da Agosto 2024 ad Agosto 2025'"
+        )
+
+        col3, col4 = st.columns(2)
+        with col3:
+            m3_iniziale = st.number_input("Lettura iniziale (m\u00b3)", min_value=0, value=0, step=1)
+        with col4:
+            m3_finale = st.number_input("Lettura finale (m\u00b3)", min_value=0, value=0, step=1)
 
         add_watermark_single = st.checkbox("Aggiungi filigrana BOZZA", key="wm_single")
 
@@ -443,13 +462,16 @@ with tab_singola:
                 'indirizzo': indirizzo.strip(),
                 'indirizzo_formattato': format_address(indirizzo.strip()),
                 'numero_fattura': numero_fattura.strip(),
-                'data_lettura_2024': data_lettura_2024.strip(),
-                'm3_lettura_2024': m3_2024,
-                'data_lettura_2025': data_lettura_2025.strip(),
-                'm3_lettura_2025': m3_2025,
+                'data_fattura': data_fattura.strip(),
+                'scadenza_pagamento': scadenza_pagamento.strip(),
+                'periodo_letture': periodo_letture.strip(),
+                'data_lettura_2024': 'iniziale',
+                'm3_lettura_2024': m3_iniziale,
+                'data_lettura_2025': 'finale',
+                'm3_lettura_2025': m3_finale,
             }
 
-            consumo = max(0, m3_2025 - m3_2024)
+            consumo = max(0, m3_finale - m3_iniziale)
             eccedenza = max(0, consumo - 80)
             totale_imponibile = 130 + eccedenza * 1.8
             iva = totale_imponibile * 0.1
@@ -457,6 +479,7 @@ with tab_singola:
 
             # Anteprima calcoli
             st.info(
+                f"**Periodo:** {periodo_letture} | "
                 f"**Consumo:** {consumo} m\u00b3 | "
                 f"**Eccedenza:** {eccedenza} m\u00b3 | "
                 f"**Imponibile:** \u20ac {totale_imponibile:.2f} | "
