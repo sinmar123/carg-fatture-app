@@ -181,7 +181,8 @@ def create_pdf_bytes(data, add_watermark=False, logo_bytes=None):
     label_iniziale = data.get('data_lettura_2024', 'lettura iniziale').lower()
     label_finale = data.get('data_lettura_2025', 'lettura finale').lower()
     desc_consumi = (
-        f"<font size=10>Lettura {label_iniziale}: {lettura_2024} m\u00b3 | "
+        f"<font size=10>Periodo: {periodo_letture}<br/>"
+        f"Lettura {label_iniziale}: {lettura_2024} m\u00b3 | "
         f"Lettura {label_finale}: {lettura_2025} m\u00b3 | "
         f"<b>Consumo totale: {consumo} m\u00b3</b>"
     )
