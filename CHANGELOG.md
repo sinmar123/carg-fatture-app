@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-06-04
+
+### Aggiunto
+- Anno della fattura selezionabile: nuovo campo "Anno fattura" in entrambe le modalità (CSV e fattura singola), default all'anno corrente. L'intestazione del PDF mostra "FATTURA nr. {numero}/{anno}" al posto dell'anno fisso 2025
+
 ## 2026-03-15
 
 ### Aggiunto

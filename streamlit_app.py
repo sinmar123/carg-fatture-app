@@ -3,6 +3,7 @@ import re
 import io
 import os
 import zipfile
+from datetime import datetime
 import streamlit as st
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
@@ -110,8 +111,9 @@ def create_pdf_bytes(data, add_watermark=False, logo_bytes=None):
     )
 
     data_fattura = data.get('data_fattura', '20/10/2025')
+    anno_fattura = data.get('anno_fattura', '2025')
     invoice_header = Paragraph(
-        f"<b><font size=11 color='grey'>FATTURA nr. {data.get('numero_fattura', 'N/A')}/2025 del {data_fattura}</font></b>",
+        f"<b><font size=11 color='grey'>FATTURA nr. {data.get('numero_fattura', 'N/A')}/{anno_fattura} del {data_fattura}</font></b>",
         invoice_num_style
     )
 
@@ -352,6 +354,8 @@ with tab_csv:
             selezionati = st.multiselect("Seleziona i soci", opzioni)
             codici_filtro = [s.split(' - ')[0].strip() for s in selezionati]
 
+        anno_fattura_csv = st.number_input("Anno fattura", min_value=2000, max_value=2100,
+                                           value=datetime.now().year, step=1, key="anno_csv")
         add_watermark = st.checkbox("Aggiungi filigrana BOZZA")
 
         if st.button("Genera fatture", type="primary", use_container_width=True):
@@ -367,6 +371,7 @@ with tab_csv:
                 pdf_files = []
 
                 for i, row in enumerate(rows_to_process):
+                    row['anno_fattura'] = str(anno_fattura_csv)
                     fattura_numero = row['numero_fattura']
                     nome_file = row.get('nomefile', '').strip()
                     if nome_file:
@@ -424,6 +429,8 @@ with tab_singola:
 
         with col2:
             numero_fattura = st.text_input("Numero fattura", value="2")
+            anno_fattura = st.number_input("Anno fattura", min_value=2000, max_value=2100,
+                                           value=datetime.now().year, step=1, key="anno_single")
             data_fattura = st.text_input("Data fattura", value="20/10/2025")
             scadenza_pagamento = st.text_input("Termine di pagamento", value="31/10/2025")
 
@@ -460,6 +467,7 @@ with tab_singola:
                 'indirizzo': indirizzo.strip(),
                 'indirizzo_formattato': format_address(indirizzo.strip()),
                 'numero_fattura': numero_fattura.strip(),
+                'anno_fattura': str(anno_fattura),
                 'data_fattura': data_fattura.strip(),
                 'scadenza_pagamento': scadenza_pagamento.strip(),
                 'periodo_letture': periodo_letture.strip(),
