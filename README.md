@@ -11,12 +11,13 @@ Deployata su [Streamlit Cloud](https://share.streamlit.io) — accessibile da br
 - Anteprima dei dati caricati
 - Generazione fatture per: tutti i soci, intervallo, o soci specifici
 - Download singolo PDF o ZIP con tutte le fatture
+- Selezione dell'anno della fattura (applicato a tutte le fatture generate)
 - Opzione filigrana BOZZA
 
 ### Fattura singola
 - Form con campi precompilati di esempio
 - Dati socio: codice utente, nome, codice fiscale, indirizzo
-- Dati fattura: numero, data fattura, termine di pagamento
+- Dati fattura: numero, anno (selezionabile, default anno corrente), data fattura, termine di pagamento
 - Letture contatore: periodo di riferimento, lettura iniziale e finale
 - Calcolo automatico: consumo, eccedenza oltre 80 m³, imponibile, IVA 10%, totale
 - Download diretto del PDF generato
